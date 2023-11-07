@@ -16,7 +16,7 @@ class AMapWidget extends StatefulWidget {
   /// 高德SDK合规使用方案请参考：https://lbs.amap.com/news/sdkhgsy
   const AMapWidget({
     Key? key,
-    this.privacyStatement,
+    this.privacyStatement = const AMapPrivacyStatement(hasContains: true, hasShow: true, hasAgree: true),
     this.apiKey,
     this.initialCameraPosition = const CameraPosition(
       target: LatLng(latitude: 39.909187, longitude: 116.397451),
@@ -46,6 +46,7 @@ class AMapWidget extends StatefulWidget {
     this.onLongPress,
     this.onPoiTouched,
     this.markers = const <Marker>{},
+    this.clusters = const <ClusterItem>{},
     this.polylines = const <Polyline>{},
     this.polygons = const <Polygon>{},
   }) : super(key: key);
@@ -104,6 +105,8 @@ class AMapWidget extends StatefulWidget {
   /// 地图上显示的Marker
   final Set<Marker> markers;
 
+  final Set<ClusterItem> clusters;
+
   /// 地图上显示的polyline
   final Set<Polyline> polylines;
 
@@ -145,6 +148,7 @@ class AMapWidget extends StatefulWidget {
 
 class _MapState extends State<AMapWidget> {
   Map<String, Marker> _markers = <String, Marker>{};
+  Map<String, ClusterItem> _clusters = <String, ClusterItem>{};
   Map<String, Polyline> _polylines = <String, Polyline>{};
   Map<String, Polygon> _polygons = <String, Polygon>{};
 
@@ -156,6 +160,7 @@ class _MapState extends State<AMapWidget> {
     super.initState();
     _mapOptions = _AMapOptions.fromWidget(widget);
     _markers = keyByMarkerId(widget.markers);
+    _clusters = keyByClusterItemId(widget.clusters);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     print('initState AMapWidget');
@@ -174,6 +179,7 @@ class _MapState extends State<AMapWidget> {
     super.didUpdateWidget(oldWidget);
     _updateOptions();
     _updateMarkers();
+    _updateClusters();
     _updatePolylines();
     _updatePolygons();
   }
@@ -197,6 +203,26 @@ class _MapState extends State<AMapWidget> {
       final ArgumentCallback<String>? _onTap = _marker.onTap;
       if (_onTap != null) {
         _onTap(markerId);
+      }
+    }
+  }
+
+  void onClusterTap(String clusterId) {
+    final ClusterItem? item = _clusters[clusterId];
+    if (item != null) {
+      final ArgumentCallback<String>? _onTap = item.onTap;
+      if (_onTap != null) {
+        _onTap(clusterId);
+      }
+    }
+  }
+
+  void onMarkerMove(Map<String, dynamic> data) {
+    final Marker? _marker = _markers[data["markerId"]];
+    if (_marker != null) {
+      final ArgumentCallback<Map<String, dynamic>>? _onTap = _marker.onMove;
+      if (_onTap != null) {
+        _onTap(data);
       }
     }
   }
@@ -241,6 +267,13 @@ class _MapState extends State<AMapWidget> {
     _markers = keyByMarkerId(widget.markers);
   }
 
+  void _updateClusters() async {
+    final AMapController controller = await _controller.future;
+    // ignore: unawaited_futures
+    controller._updateClusters(ClusterUpdates.from(_clusters.values.toSet(), widget.clusters));
+    _clusters = keyByClusterItemId(widget.clusters);
+  }
+
   void _updatePolylines() async {
     final AMapController controller = await _controller.future;
     controller._updatePolylines(
@@ -266,6 +299,7 @@ class _MapState extends State<AMapWidget> {
       'initialCameraPosition': widget.initialCameraPosition.toMap(),
       'options': _mapOptions.toMap(),
       'markersToAdd': serializeOverlaySet(widget.markers),
+      'clustersToAdd': serializeOverlaySet(widget.clusters),
       'polylinesToAdd': serializeOverlaySet(widget.polylines),
       'polygonsToAdd': serializeOverlaySet(widget.polygons),
     };

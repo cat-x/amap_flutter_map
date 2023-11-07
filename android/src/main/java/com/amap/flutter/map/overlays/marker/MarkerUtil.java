@@ -2,7 +2,6 @@ package com.amap.flutter.map.overlays.marker;
 
 import android.text.TextUtils;
 
-import com.amap.flutter.map.overlays.marker.MarkerOptionsSink;
 import com.amap.flutter.map.utils.ConvertUtil;
 
 import java.util.List;
@@ -73,6 +72,11 @@ public class MarkerUtil {
         final Object clickable = data.get("clickable");
         if (null != clickable) {
             sink.setClickable(ConvertUtil.toBoolean(clickable));
+        }
+
+        final Object showInfoWindow = data.get("showInfoWindow");
+        if (null != showInfoWindow) {
+            sink.showInfoWindow();
         }
 
         final String markerId = (String) data.get("id");

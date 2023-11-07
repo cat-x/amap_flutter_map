@@ -12,6 +12,16 @@ import 'types.dart';
 class PolylineUpdates {
   /// 通过 [Polyline] 的前后更新集合构造一个 [PolylineUpdates]
   PolylineUpdates.from(Set<Polyline> previous, Set<Polyline> current) {
+    // ignore: unnecessary_null_comparison
+    if (previous == null) {
+      previous = Set<Polyline>.identity();
+    }
+
+    // ignore: unnecessary_null_comparison
+    if (current == null) {
+      current = Set<Polyline>.identity();
+    }
+
     final Map<String, Polyline> previousPolylines = keyByPolylineId(previous);
     final Map<String, Polyline> currentPolylines = keyByPolylineId(current);
 

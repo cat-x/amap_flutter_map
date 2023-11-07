@@ -88,6 +88,24 @@
     return ret;
 }
 
+
+
++ (id)annotationFromDict:(NSDictionary*)dict modelClass:(Class)modelClass {
+    if(![dict isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"[AMap] the object must be of %@", [NSDictionary class]);
+        return nil;
+    }
+    
+    if([modelClass isSubclassOfClass:[NSDictionary class]]) {
+        return [dict copy];
+    }
+    
+    MAAnimatedAnnotation *anno = [[MAAnimatedAnnotation alloc] init];
+//    anno.coordinate = CLLocationCoordinate2DMake(positionModel.latitude, positionModel.longitude);
+    
+    return anno;
+}
+
 + (id)modelFromDict:(NSDictionary*)dict modelClass:(Class)modelClass {
     if(![dict isKindOfClass:[NSDictionary class]]) {
         NSLog(@"[AMap] the object must be of %@", [NSDictionary class]);
@@ -146,6 +164,15 @@
                 //使用msgSend直接设置经纬度的属性
                 SEL sel = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[propertyName capitalizedString]]);
                 ((void (*)(id,SEL,CGPoint))objc_msgSend)(ret,sel,point);
+                continue;
+            } else if ([encodeType isEqualToString:@"T^{CLLocationCoordinate2D=dd}"]) {//经纬度
+                //解析经纬度
+                CLLocationCoordinate2D *coordinate = [self coordinatesFromModel:value];
+                //使用msgSend直接设置经纬度的属性
+                SEL sel = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[propertyName capitalizedString]]);
+                ((void (*)(id,SEL,CLLocationCoordinate2D*))objc_msgSend)(ret,sel,coordinate);
+                NSArray* array = value;
+                [ret setValue:[NSNumber numberWithInt:array.count] forKey:@"trackCount"];
                 continue;
             }
         }
@@ -270,6 +297,18 @@
         }
     }
     return location;
+}
+
++ (CLLocationCoordinate2D*)coordinatesFromModel:(id)model {
+    NSArray* data = model;
+    CLLocationCoordinate2D* result = malloc(data.count * sizeof(CLLocationCoordinate2D));
+    int index = 0;
+    for (NSArray* dict in data) {
+        double latitudeNum = [dict[0] doubleValue];
+        double longitudeNum = [dict[1] doubleValue];
+        result[index++] = CLLocationCoordinate2DMake(latitudeNum, longitudeNum);
+    }
+    return result;
 }
 
 @end

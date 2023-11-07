@@ -57,6 +57,56 @@ class MethodChannelAMapFlutterMap implements AMapFlutterPlatform {
     );
   }
 
+  /// 更新Marker的显示
+  // Future<void> showMarkerInfoWindow() {
+  //   return channel(mapId).invokeMethod<void>(
+  //     'markers#infoWindowShow',
+  //     markerUpdates.toMap(),
+  //   );
+  // }
+  /// 更新Marker的数据
+  Future<void> updateClusters(
+      ClusterUpdates markerUpdates, {
+        required int mapId,
+      }) {
+    return channel(mapId).invokeMethod<void>(
+      'clusters#update',
+      markerUpdates.toMap(),
+    );
+  }
+
+  ///移动marker
+  Future<void> moveMarker(String markerId, {required int mapId}) {
+    return channel(mapId)
+        .invokeMethod<void>('marker#move', <String, dynamic>{
+      'markerId': markerId,
+    });
+  }
+
+  ///移动marker
+  Future<void> stopMarker(String markerId, {required int mapId}) {
+    return channel(mapId)
+        .invokeMethod<void>('marker#stop', <String, dynamic>{
+      'markerId': markerId,
+    });
+  }
+
+  ///删除marker
+  Future<void> deleteMarker(String markerId, {required int mapId}) {
+    return channel(mapId)
+        .invokeMethod<void>('marker#delete', <String, dynamic>{
+      'markerId': markerId,
+    });
+  }
+
+  Future<void> setMarkerDuration(String markerId, int duration, {required int mapId}) {
+    return channel(mapId)
+        .invokeMethod<void>('marker#duration', <String, dynamic>{
+      'markerId': markerId,
+      'duration': duration,
+    });
+  }
+  
   /// 更新polyline的数据
   Future<void> updatePolylines(
     PolylineUpdates polylineUpdates, {
@@ -153,6 +203,14 @@ class MethodChannelAMapFlutterMap implements AMapFlutterPlatform {
     return _events(mapId).whereType<MarkerTapEvent>();
   }
 
+  Stream<MarkerMoveEvent> onMarkerMove({required int mapId}) {
+    return _events(mapId).whereType<MarkerMoveEvent>();
+  }
+
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    return _events(mapId).whereType<ClusterTapEvent>();
+  }
+
   Stream<MarkerDragEndEvent> onMarkerDragEnd({required int mapId}) {
     return _events(mapId).whereType<MarkerDragEndEvent>();
   }
@@ -197,10 +255,28 @@ class MethodChannelAMapFlutterMap implements AMapFlutterPlatform {
             mapId, LatLng.fromJson(call.arguments['latLng'])!));
         break;
 
+      case 'cluster#onTap':
+        _mapEventStreamController.add(ClusterTapEvent(
+          mapId,
+          call.arguments['clusterId'],
+        ));
+        break;
+
       case 'marker#onTap':
         _mapEventStreamController.add(MarkerTapEvent(
           mapId,
           call.arguments['markerId'],
+        ));
+        break;
+
+      case 'marker#onMove':
+        _mapEventStreamController.add(MarkerMoveEvent(
+          mapId,
+          {
+            "markerId": call.arguments['markerId'],
+            "distance": call.arguments['distance'],
+            "index": call.arguments['index'],
+          },
         ));
         break;
       case 'marker#onDragEnd':

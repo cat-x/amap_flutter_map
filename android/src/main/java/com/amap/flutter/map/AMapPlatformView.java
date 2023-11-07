@@ -13,6 +13,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.TextureMapView;
 import com.amap.flutter.map.core.MapController;
+import com.amap.flutter.map.overlays.cluster.ClusterController;
 import com.amap.flutter.map.overlays.marker.MarkersController;
 import com.amap.flutter.map.overlays.polygon.PolygonsController;
 import com.amap.flutter.map.overlays.polyline.PolylinesController;
@@ -44,6 +45,7 @@ public class AMapPlatformView
     private final MethodChannel methodChannel;
 
     private MapController mapController;
+    private ClusterController clusterController;
     private MarkersController markersController;
     private PolylinesController polylinesController;
     private PolygonsController polygonsController;
@@ -68,6 +70,7 @@ public class AMapPlatformView
             mapView = new TextureMapView(context, options);
             AMap amap = mapView.getMap();
             mapController = new MapController(methodChannel, mapView);
+            clusterController = new ClusterController(methodChannel, mapView);
             markersController = new MarkersController(methodChannel, amap);
             polylinesController = new PolylinesController(methodChannel, amap);
             polygonsController = new PolygonsController(methodChannel, amap);
@@ -83,6 +86,13 @@ public class AMapPlatformView
         if (null != methodIdArray && methodIdArray.length > 0) {
             for (String methodId : methodIdArray) {
                 myMethodCallHandlerMap.put(methodId, mapController);
+            }
+        }
+
+        methodIdArray = clusterController.getRegisterMethodIdArray();
+        if (null != methodIdArray && methodIdArray.length > 0) {
+            for (String methodId : methodIdArray) {
+                myMethodCallHandlerMap.put(methodId, clusterController);
             }
         }
 
@@ -115,6 +125,10 @@ public class AMapPlatformView
 
     public MarkersController getMarkersController() {
         return markersController;
+    }
+
+    public ClusterController getClusterController() {
+        return clusterController;
     }
 
     public PolylinesController getPolylinesController() {
@@ -257,6 +271,7 @@ public class AMapPlatformView
         if (mapView == null) {
             return;
         }
+        clusterController.onDestroy();
         mapView.onDestroy();
     }
 

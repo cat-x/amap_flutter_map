@@ -31,7 +31,11 @@
 - (MAPointAnnotation *)annotation {
     if (_annotation == nil) {
         NSAssert(self.id_ != nil, @"markerid不能为空");
-        _annotation = [[MAPointAnnotation alloc] initWithMarkerId:self.id_];
+        if (_movable) {
+            _annotation = [[MAAnimatedAnnotation alloc] initWithMarkerId:self.id_];
+        } else {
+            _annotation = [[MAPointAnnotation alloc] initWithMarkerId:self.id_];
+        }
         [self _updateAnnotation];
     }
     return  _annotation;

@@ -29,12 +29,21 @@ public class Const {
             METHOD_MAP_TAKE_SNAPSHOT,
             METHOD_MAP_CLEAR_DISK};
 
+    /**
+     * cluster
+     */
+    public static final String METHOD_CLUSTER_UPDATE = "clusters#update";
+    public static final String[] METHOD_ID_LIST_FOR_CLUSTER = {METHOD_CLUSTER_UPDATE};
 
     /**
      * markers
      */
     public static final String METHOD_MARKER_UPDATE = "markers#update";
-    public static final String[] METHOD_ID_LIST_FOR_MARKER = {METHOD_MARKER_UPDATE};
+    public static final String METHOD_MARKER_MOVE = "marker#move";
+    public static final String METHOD_MARKER_STOP = "marker#stop";
+    public static final String METHOD_MARKER_DURATION = "marker#duration";
+    public static final String METHOD_MARKER_DELETE = "marker#delete";
+    public static final String[] METHOD_ID_LIST_FOR_MARKER = {METHOD_MARKER_UPDATE, METHOD_MARKER_MOVE, METHOD_MARKER_STOP, METHOD_MARKER_DURATION, METHOD_MARKER_DELETE};
 
     /**
      * polygons

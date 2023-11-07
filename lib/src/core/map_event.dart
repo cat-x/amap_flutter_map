@@ -55,9 +55,18 @@ class _PositionedMapEvent<T> extends MapEvent<T> {
   _PositionedMapEvent(int mapId, this.position, T value) : super(mapId, value);
 }
 
+class ClusterTapEvent extends MapEvent<String> {
+  ClusterTapEvent(int mapId, String data) : super(mapId, data);
+}
+
 /// [Marker] 的点击事件
 class MarkerTapEvent extends MapEvent<String> {
   MarkerTapEvent(int mapId, String markerId) : super(mapId, markerId);
+}
+
+/// [Marker] 的移动事件
+class MarkerMoveEvent extends MapEvent<Map<String, dynamic>> {
+  MarkerMoveEvent(int mapId, Map<String, dynamic> data) : super(mapId, data);
 }
 
 /// [Marker] 的拖拽结束事件，附带拖拽结束时的位置信息[LatLng].

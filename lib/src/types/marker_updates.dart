@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show setEquals;
 
 import '../extension/map_extension.dart';
 import 'types.dart';
+import 'marker.dart';
 
 /// 用以描述 [Marker] 的更新项
 class MarkerUpdates {

@@ -51,6 +51,8 @@ public interface AMapOptionsSink {
 
     public void setTiltGesturesEnabled(boolean tiltGesturesEnabled);
 
+    public void setInitialClusters(Object initialClusters);
+
     public void setInitialMarkers(Object initialMarkers);
 
     public void setInitialPolylines(Object initialPolylines);

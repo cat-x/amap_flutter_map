@@ -13,6 +13,16 @@ import 'types.dart';
 class PolygonUpdates {
   /// 通过 [Polygon] 的前后更新集合构造一个 [PolygonUpdates]
   PolygonUpdates.from(Set<Polygon> previous, Set<Polygon> current) {
+    // ignore: unnecessary_null_comparison
+    if (previous == null) {
+      previous = Set<Polygon>.identity();
+    }
+
+    // ignore: unnecessary_null_comparison
+    if (current == null) {
+      current = Set<Polygon>.identity();
+    }
+
     final Map<String, Polygon> previousPolygons = keyByPolygonId(previous);
     final Map<String, Polygon> currentPolygons = keyByPolygonId(current);
 

@@ -11,6 +11,7 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.Poi;
 import com.amap.api.maps.model.Polyline;
+import com.amap.api.maps.utils.overlay.MovingPointOverlay;
 import com.amap.flutter.map.MyMethodCallHandler;
 import com.amap.flutter.map.overlays.AbstractOverlayController;
 import com.amap.flutter.map.utils.Const;
@@ -61,6 +62,18 @@ public class MarkersController
             case Const.METHOD_MARKER_UPDATE:
                 invokeMarkerOptions(call, result);
                 break;
+            case Const.METHOD_MARKER_MOVE:
+                invokeMarkerMove(call, result);
+                break;
+            case Const.METHOD_MARKER_STOP:
+                invokeMarkerStop(call, result);
+                break;
+            case Const.METHOD_MARKER_DURATION:
+                invokeMarkerDuration(call, result);
+                break;
+            case Const.METHOD_MARKER_DELETE:
+                invokeMarkerDelete(call, result);
+                break;
         }
     }
 
@@ -84,6 +97,73 @@ public class MarkersController
         result.success(null);
     }
 
+    public void invokeMarkerMove(MethodCall methodCall, MethodChannel.Result result) {
+        if (null == methodCall) {
+            return;
+        }
+        Object markerId = methodCall.argument("markerId");
+        if (markerId != null) {
+            MovingPointOverlay marker = movableMarkers.get(markerId);
+            if (marker != null) {
+                marker.startSmoothMove();
+            }
+        }
+        result.success(null);
+    }
+
+    public void invokeMarkerStop(MethodCall methodCall, MethodChannel.Result result) {
+        if (null == methodCall) {
+            return;
+        }
+        Object markerId = methodCall.argument("markerId");
+        if (markerId != null) {
+            MovingPointOverlay marker = movableMarkers.get(markerId);
+            if (marker != null) {
+                marker.stopMove();
+            }
+        }
+        result.success(null);
+    }
+
+    public void invokeMarkerDuration(MethodCall methodCall, MethodChannel.Result result) {
+        if (null == methodCall) {
+            return;
+        }
+        Object markerId = methodCall.argument("markerId");
+        if (markerId != null) {
+            MovingPointOverlay overlay = movableMarkers.get(markerId);
+            if (overlay != null) {
+                ((MovingMarker) overlay).changeTotalDuration(Math.max(1, ConvertUtil.toInt(methodCall.argument("duration"))));
+            }
+        }
+        result.success(null);
+    }
+
+    public void invokeMarkerDelete(MethodCall methodCall, MethodChannel.Result result) {
+        if (null == methodCall) {
+            return;
+        }
+        Object markerId = methodCall.argument("markerId");
+        if (markerId != null) {
+            MovingPointOverlay overlay = movableMarkers.get(markerId);
+            if (overlay != null) {
+                overlay.destroy();
+            } else {
+                String id = idMapByOverlyId.get(markerId);
+                if (id != null) {
+                    List<Marker> markers = amap.getMapScreenMarkers();
+                    for (Marker marker : markers) {
+                        if (id.equals(marker.getId())) {
+                            marker.destroy();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        result.success(null);
+    }
+
     public void addByList(List<Object> markersToAdd) {
         if (markersToAdd != null) {
             for (Object markerToAdd : markersToAdd) {
@@ -93,12 +173,19 @@ public class MarkersController
     }
 
     private void add(Object markerObj) {
-        if (null != amap) {
+        if (null != amap && markerObj != null) {
+            final Map<?, ?> markerData = ConvertUtil.toMap(markerObj);
             MarkerOptionsBuilder builder = new MarkerOptionsBuilder();
-            String dartMarkerId = MarkerUtil.interpretMarkerOptions(markerObj, builder);
-            if (!TextUtils.isEmpty(dartMarkerId)) {
-                MarkerOptions markerOptions = builder.build();
-                final Marker marker = amap.addMarker(markerOptions);
+            String dartMarkerId = MarkerUtil.interpretMarkerOptions(markerData, builder);
+            MarkerOptions markerOptions = builder.build();
+            Marker marker = amap.addMarker(markerOptions);
+            if (ConvertUtil.toBoolean(markerData.get("movable"))){
+                MovingPointOverlay movableMarker = new MovingMarker(amap, marker);
+                movableMarker.setTotalDuration(Math.max(ConvertUtil.toInt(markerData.get("duration")), 1));
+                movableMarker.setPoints(ConvertUtil.toPoints(markerData.get("track")));
+                movableMarkers.put(dartMarkerId, movableMarker);
+                movableMarker.setMoveListener(new MarkerMoveListener(methodChannel, dartMarkerId, movableMarker));
+            } else {
                 Object clickable = ConvertUtil.getKeyValueFromMapObject(markerObj, "clickable");
                 if (null != clickable) {
                     marker.setClickable(ConvertUtil.toBoolean(clickable));
@@ -124,7 +211,7 @@ public class MarkersController
         if (null != dartMarkerId) {
             MarkerController markerController = controllerMapByDartId.get(dartMarkerId);
             if (null != markerController) {
-                MarkerUtil.interpretMarkerOptions(markerToChange, markerController);
+                MarkerUtil.interpretMarkerOptions(ConvertUtil.toMap(markerToChange), markerController);
             }
         }
     }

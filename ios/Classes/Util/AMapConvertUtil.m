@@ -114,7 +114,8 @@
     } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
         if (iconData.count == 3) {
             image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-            NSNumber* scaleParam = iconData[2];
+            // NSNumber* scaleParam = iconData[2];
+			NSNumber* scaleParam = [NSNumber numberWithFloat:[iconData[2] floatValue]*1.85];
             image = [self scaleImage:image param:scaleParam];
         } else {
             NSString* error =

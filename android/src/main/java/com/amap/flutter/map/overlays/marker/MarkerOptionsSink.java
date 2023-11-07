@@ -36,4 +36,7 @@ public interface MarkerOptionsSink {
 
     void setClickable(boolean clickable);
 
+    void showInfoWindow();
+
+    void hideInfoWindow();
 }

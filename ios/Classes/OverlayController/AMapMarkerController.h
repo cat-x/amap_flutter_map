@@ -31,7 +31,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)onMarkerTap:(NSString*)markerId;
 
+- (BOOL)onClusterTap:(NSString*)clusterId;
+
 - (BOOL)onMarker:(NSString *)markerId endPostion:(CLLocationCoordinate2D)position;
+
+- (void) showAnnotations:(NSArray *)annotations;
+
+- (void) regionDidChangeAnimated:(BOOL)animated;
+
+- (MAAnnotationView *) viewForAnnotation:(id<MAAnnotation>)annotation;
 
 //- (BOOL)onInfoWindowTap:(NSString *)markerId;
 

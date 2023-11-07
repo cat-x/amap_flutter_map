@@ -4,6 +4,7 @@
 import 'dart:ui' show hashValues, Offset;
 
 import 'package:amap_flutter_base/amap_flutter_base.dart';
+import 'package:flutter/foundation.dart';
 
 import '../extension/map_extension.dart';
 import 'bitmap.dart';
@@ -72,19 +73,31 @@ class Marker extends BaseOverlay {
     Offset anchor = const Offset(0.5, 1.0),
     this.clickable = true,
     this.draggable = false,
+    this.movable = false,
     this.icon = BitmapDescriptor.defaultMarker,
     this.infoWindowEnable = true,
     this.infoWindow = InfoWindow.noText,
     this.rotation = 0.0,
+    this.duration = 0,
+    this.track = const <LatLng>[],
     this.visible = true,
     this.zIndex = 0.0,
     this.onTap,
+    this.onMove,
     this.onDragEnd,
-  })  : this.alpha = alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha),
-        this.anchor =
-            ((anchor.dx < 0 || anchor.dx > 1 || anchor.dy < 0 || anchor.dy > 1)
+    this.showInfoWindow = false,
+  })  : this.alpha =
+            // ignore: unnecessary_null_comparison
+            (alpha != null ? (alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha)) : alpha),
+        // ignore: unnecessary_null_comparison
+        this.anchor = (anchor == null
+            ? Offset(0.5, 1.0)
+            : ((anchor.dx < 0 ||
+                    anchor.dx > 1 ||
+                    anchor.dy < 0 ||
+                    anchor.dy > 1)
                 ? Offset(0.5, 1.0)
-                : anchor),
+                : anchor)),
         super();
 
   /// 透明度
@@ -95,6 +108,15 @@ class Marker extends BaseOverlay {
 
   /// 是否可点击，默认为true
   final bool clickable;
+
+  /// 是否为可移动marker
+  final bool movable;
+
+  /// marker移动时间
+  final int duration;
+
+  /// marker移动时间
+  final List<LatLng> track;
 
   /// 是否可拖拽，默认为false
   final bool draggable;
@@ -127,8 +149,13 @@ class Marker extends BaseOverlay {
   /// 回调的参数是对应的id
   final ArgumentCallback<String>? onTap;
 
+  /// Marker移动的回调
+  final ArgumentCallback<dynamic>? onMove;
+
   /// Marker被拖拽结束的回调
   final MarkerDragEndCallback? onDragEnd;
+
+  final bool showInfoWindow;
 
   /// copy的真正复制的参数，主要用于需要修改某个属性参数时使用
   Marker copyWith({
@@ -136,13 +163,18 @@ class Marker extends BaseOverlay {
     Offset? anchorParam,
     bool? clickableParam,
     bool? draggableParam,
+    bool? movableParam,
     BitmapDescriptor? iconParam,
     bool? infoWindowEnableParam,
     InfoWindow? infoWindowParam,
     LatLng? positionParam,
+    bool? showInfoWindowParam,
     double? rotationParam,
+    int? durationParam,
+    List<LatLng>? trackParam,
     bool? visibleParam,
-    ArgumentCallback<String?>? onTapParam,
+    ArgumentCallback<String?> ? onTapParam,
+    ArgumentCallback<dynamic?> ? onMoveParam,
     MarkerDragEndCallback? onDragEndParam,
   }) {
     Marker copyMark = Marker(
@@ -150,14 +182,19 @@ class Marker extends BaseOverlay {
       anchor: anchorParam ?? anchor,
       clickable: clickableParam ?? clickable,
       draggable: draggableParam ?? draggable,
+      movable: movableParam ?? movable,
       icon: iconParam ?? icon,
       infoWindowEnable: infoWindowEnableParam ?? infoWindowEnable,
       infoWindow: infoWindowParam ?? infoWindow,
       position: positionParam ?? position,
+      showInfoWindow:showInfoWindowParam??showInfoWindow,
       rotation: rotationParam ?? rotation,
+      duration: durationParam ?? duration,
+      track: trackParam ?? track,
       visible: visibleParam ?? visible,
       zIndex: zIndex,
       onTap: onTapParam ?? onTap,
+      onMove: onMoveParam ?? onMove,
       onDragEnd: onDragEndParam ?? onDragEnd,
     );
     copyMark.setIdForCopy(id);
@@ -174,8 +211,13 @@ class Marker extends BaseOverlay {
       'anchor': _offsetToJson(anchor),
       'clickable': clickable,
       'draggable': draggable,
+      'movable': movable,
+      'duration': duration,
+      'track': _trackToJson(),
       'icon': icon.toMap(),
       'infoWindowEnable': infoWindowEnable,
+      'infoWindow': infoWindow.toMap(),
+      'showInfoWindow': showInfoWindow,
       'position': position.toJson(),
       'rotation': rotation,
       'visible': visible,
@@ -183,6 +225,13 @@ class Marker extends BaseOverlay {
     }..removeAllEmptyEntry();
   }
 
+  dynamic _trackToJson() {
+    final List<dynamic> result = <dynamic>[];
+    for (final LatLng point in track) {
+      result.add(point.toJson());
+    }
+    return result;
+  }
   List<double> _offsetToJson(Offset offset) {
     return <double>[offset.dx, offset.dy];
   }
@@ -198,7 +247,10 @@ class Marker extends BaseOverlay {
         anchor == typedOther.anchor &&
         clickable == typedOther.clickable &&
         draggable == typedOther.draggable &&
+        movable == typedOther.movable &&
         icon == typedOther.icon &&
+        duration == typedOther.duration &&
+        listEquals(track, typedOther.track) &&
         infoWindowEnable == typedOther.infoWindowEnable &&
         infoWindow == typedOther.infoWindow &&
         position == typedOther.position &&
@@ -214,6 +266,7 @@ class Marker extends BaseOverlay {
   String toString() {
     return 'Marker(id: $id, alpha: $alpha, anchor: $anchor, '
         'clickable: $clickable, draggable: $draggable, '
+	'movable: $movable, duration: $duration, track: $track, '
         'icon: $icon, infoWindowEnable: $infoWindowEnable, '
         'infoWindow: $infoWindow, position: $position, rotation: $rotation, '
         'visible: $visible, zIndex: $zIndex, onTap: $onTap'

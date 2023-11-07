@@ -100,6 +100,29 @@ class AMapController {
   Future<void> _updateMarkers(MarkerUpdates markerUpdates) {
     return _methodChannel.updateMarkers(markerUpdates, mapId: mapId);
   }
+  
+  Future<void> _updateClusters(ClusterUpdates markerUpdates) {
+    return _methodChannel.updateClusters(markerUpdates, mapId: mapId);
+  }
+
+  ///移动marker
+  Future<void> moveMarker(String markerId) {
+    return _methodChannel.moveMarker(markerId, mapId: mapId);
+  }
+
+  ///停止移动marker
+  Future<void> stopMarker(String markerId) {
+    return _methodChannel.stopMarker(markerId, mapId: mapId);
+  }
+
+  Future<void> setMarkerDuration(String markerId, int duration) {
+    return _methodChannel.setMarkerDuration(markerId, duration, mapId: mapId);
+  }
+
+  ///删除marker
+  Future<void> deleteMarker(String markerId) {
+    return _methodChannel.deleteMarker(markerId, mapId: mapId);
+  }
 
   Future<void> _updatePolylines(PolylineUpdates polylineUpdates) {
     return _methodChannel.updatePolylines(polylineUpdates, mapId: mapId);

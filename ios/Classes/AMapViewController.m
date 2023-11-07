@@ -26,6 +26,9 @@
 #import "AMapJsonUtils.h"
 #import "AMapConvertUtil.h"
 #import "FlutterMethodChannel+MethodCallDispatch.h"
+#import "ClusterAnnotationView.h"
+#import "ClusterAnnotation.h"
+#import "AMapMarker.h"
 
 @interface AMapViewController ()<MAMapViewDelegate>
 
@@ -318,6 +321,11 @@
 //MARK: Annotation相关回调
 
 - (MAAnnotationView *)mapView:(MAMapView *)mapView viewForAnnotation:(id<MAAnnotation>)annotation {
+    MAAnnotationView *annoView = [self.markerController viewForAnnotation:annotation];
+    if (annoView) {
+        return annoView;
+    }
+    
     if ([annotation isKindOfClass:[MAPointAnnotation class]] == NO) {
         return nil;
     }
@@ -374,11 +382,30 @@
  * @param view annotationView
  */
 - (void)mapView:(MAMapView *)mapView didAnnotationViewTapped:(MAAnnotationView *)view {
-    MAPointAnnotation *fAnno = view.annotation;
-    if (fAnno.markerId == nil) {
-        return;
+    if ([view isKindOfClass:[ClusterAnnotationView class]]) {
+        ClusterAnnotation *anno = view.annotation;
+        int count = (int) anno.count;
+        if (count > 1) {
+            NSMutableArray *annotations = [[NSMutableArray alloc] init];
+            for (AMapMarker *marker in anno.pois) {
+                [annotations addObject: marker.annotation];
+            }
+            [_markerController showAnnotations:annotations];
+        } else if (count == 1) {
+            AMapMarker *marker = anno.pois[0];
+            if (marker.id_ == nil)
+                return;
+            [_markerController onClusterTap:marker.id_];
+        } else {
+            return;
+        }
+    } else {
+        MAPointAnnotation *anno = view.annotation;
+        if (anno.markerId == nil) {
+            return;
+        }
+        [_markerController onMarkerTap:anno.markerId];
     }
-    [_markerController onMarkerTap:fAnno.markerId];
 }
 
 /**
@@ -494,6 +521,7 @@
     if (dict) {
         [_channel invokeMethod:@"camera#onMoveEnd" arguments:@{@"position":dict}];
     }
+    [self.markerController regionDidChangeAnimated:animated];
 }
 
 @end

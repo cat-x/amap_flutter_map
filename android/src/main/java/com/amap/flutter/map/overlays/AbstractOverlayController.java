@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.TextureMapView;
+import com.amap.api.maps.utils.overlay.MovingPointOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import io.flutter.plugin.common.MethodChannel;
 public abstract class AbstractOverlayController<T> {
     protected final Map<String, T> controllerMapByDartId;
     protected final Map<String, String> idMapByOverlyId;
+    protected final Map<String, MovingPointOverlay> movableMarkers;
     protected final MethodChannel methodChannel;
     protected final AMap amap;
     public AbstractOverlayController(MethodChannel methodChannel, AMap amap){
@@ -28,5 +30,6 @@ public abstract class AbstractOverlayController<T> {
         this.amap = amap;
         controllerMapByDartId = new HashMap<String, T>(12);
         idMapByOverlyId = new HashMap<String, String>(12);
+        movableMarkers = new HashMap<String, MovingPointOverlay>(12);
     }
 }

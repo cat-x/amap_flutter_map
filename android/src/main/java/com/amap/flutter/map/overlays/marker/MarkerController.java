@@ -101,10 +101,13 @@ class MarkerController implements MarkerOptionsSink {
         marker.setClickable(clickable);
     }
 
+    @Override
     public void showInfoWindow() {
         marker.showInfoWindow();
     }
 
+
+    @Override
     public void hideInfoWindow() {
         marker.hideInfoWindow();
     }

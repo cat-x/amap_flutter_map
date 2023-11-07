@@ -43,6 +43,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) bool visible;
 
+@property (nonatomic, assign) bool movable;
+
+@property (nonatomic, assign) int duration;
+
+@property (nonatomic, assign) CLLocationCoordinate2D *track;
+
+@property (nonatomic, assign) int trackCount;
+
+@property (nonatomic, assign) int suspendedCount;
+
+@property (nonatomic, assign) float suspendedTime;
+
 @property (nonatomic, assign) double zIndex;
 
 //根据以上marker信息生成的对应的iOS端的Annotation

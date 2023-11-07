@@ -52,6 +52,9 @@ class AMapPlatformViewFactory extends PlatformViewFactory {
                 builder.setCamera(cameraPosition);
             }
 
+            if (params.containsKey("clustersToAdd")) {
+                builder.setInitialClusters(params.get("clustersToAdd"));
+            }
             if (params.containsKey("markersToAdd")) {
                 builder.setInitialMarkers(params.get("markersToAdd"));
             }

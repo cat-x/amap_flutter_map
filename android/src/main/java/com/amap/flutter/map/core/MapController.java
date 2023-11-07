@@ -266,6 +266,11 @@ public class MapController
         amap.getUiSettings().setTiltGesturesEnabled(tiltGesturesEnabled);
     }
 
+    @Override
+    public void setInitialClusters(Object initialClusters) {
+
+    }
+
     private CameraPosition getCameraPosition() {
         if (null != amap) {
             return amap.getCameraPosition();

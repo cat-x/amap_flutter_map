@@ -86,4 +86,14 @@ class MarkerOptionsBuilder implements MarkerOptionsSink {
     @Override
     public void setClickable(boolean clickable) {
     }
+
+    @Override
+    public void showInfoWindow(){
+
+    };
+
+    @Override
+    public void hideInfoWindow(){
+
+    };
 }

@@ -39,6 +39,8 @@ class AMapOptionsBuilder implements AMapOptionsSink {
     private float anchorX = 2.0F;
     private float anchorY = 2.0F;
 
+    private Object initialClusters;
+
     private Object initialMarkers;
 
     private Object initialPolylines;
@@ -82,6 +84,11 @@ class AMapOptionsBuilder implements AMapOptionsSink {
             aMapPlatformView.getMapController().setBuildingsEnabled(buildingsEnabled);
             aMapPlatformView.getMapController().setLabelsEnabled(labelsEnabled);
 
+
+            if (null != initialClusters) {
+                List<Object> clusterList = (List<Object>) initialClusters;
+                aMapPlatformView.getClusterController().addByList(clusterList);
+            }
 
             if (null != initialMarkers) {
                 List<Object> markerList = (List<Object>) initialMarkers;
@@ -188,6 +195,11 @@ class AMapOptionsBuilder implements AMapOptionsSink {
     @Override
     public void setTiltGesturesEnabled(boolean tiltGesturesEnabled) {
         options.tiltGesturesEnabled(tiltGesturesEnabled);
+    }
+
+    @Override
+    public void setInitialClusters(Object initialClusters) {
+        this.initialClusters = initialClusters;
     }
 
     @Override
