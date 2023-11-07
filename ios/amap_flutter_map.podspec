@@ -19,7 +19,7 @@ A new Flutter plugin.
   s.dependency 'AMap3DMap-NO-IDFA'
   s.dependency 'AMapSearch-NO-IDFA'
   s.static_framework = true
-  s.platform = :ios, '8.0'
+  s.platform = :ios, '9.0'
 
   s.static_framework = true
   # Flutter.framework does not contain a i386 slice.

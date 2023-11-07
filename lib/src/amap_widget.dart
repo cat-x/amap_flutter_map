@@ -35,6 +35,7 @@ class AMapWidget extends StatefulWidget {
     this.touchPoiEnabled = true,
     this.trafficEnabled = false,
     this.zoomGesturesEnabled = true,
+    this.gestureScaleByMapCenter = false,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.customStyleOptions,
@@ -101,6 +102,9 @@ class AMapWidget extends StatefulWidget {
 
   /// 是否支持倾斜手势
   final bool tiltGesturesEnabled;
+
+  ///是否支持中心缩放
+  final bool gestureScaleByMapCenter;
 
   /// 地图上显示的Marker
   final Set<Marker> markers;
@@ -376,6 +380,9 @@ class _AMapOptions {
 
   /// 是否支持仰角手势
   final bool? tiltGesturesEnabled;
+  
+  ///是否开启中心点缩放
+  final bool? gestureScaleByMapCenter;
 
   static _AMapOptions fromWidget(AMapWidget map) {
     return _AMapOptions(
@@ -392,6 +399,7 @@ class _AMapOptions {
       scrollGesturesEnabled: map.scrollGesturesEnabled,
       tiltGesturesEnabled: map.tiltGesturesEnabled,
       zoomGesturesEnabled: map.zoomGesturesEnabled,
+      gestureScaleByMapCenter: map.gestureScaleByMapCenter,
       customStyleOptions: map.customStyleOptions?.clone(),
       myLocationStyleOptions: map.myLocationStyleOptions?.clone(),
     );
@@ -413,6 +421,7 @@ class _AMapOptions {
       'scrollGesturesEnabled': scrollGesturesEnabled,
       'tiltGesturesEnabled': tiltGesturesEnabled,
       'zoomGesturesEnabled': zoomGesturesEnabled,
+      'gestureScaleByMapCenter': gestureScaleByMapCenter,
       'myLocationStyle': myLocationStyleOptions?.clone().toMap(),
     }..removeAllEmptyEntry();
   }

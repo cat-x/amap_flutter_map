@@ -273,6 +273,11 @@ public class ConvertUtil {
             if (null != zoomGesturesEnabled) {
                 sink.setZoomGesturesEnabled(toBoolean(zoomGesturesEnabled));
             }
+
+            final Object gestureScaleByMapCenter = data.get("gestureScaleByMapCenter");
+            if (null != gestureScaleByMapCenter) {
+                sink.setGestureScaleByMapCenter(toBoolean(gestureScaleByMapCenter));
+            }
         } catch (Throwable e) {
             LogUtil.e(CLASS_NAME, "interpretAMapOptions", e);
         }

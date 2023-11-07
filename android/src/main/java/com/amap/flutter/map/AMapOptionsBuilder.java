@@ -83,7 +83,7 @@ class AMapOptionsBuilder implements AMapOptionsSink {
             aMapPlatformView.getMapController().setTouchPoiEnabled(touchPoiEnabled);
             aMapPlatformView.getMapController().setBuildingsEnabled(buildingsEnabled);
             aMapPlatformView.getMapController().setLabelsEnabled(labelsEnabled);
-
+            aMapPlatformView.getMapController().setGestureScaleByMapCenter(gestureScaleByMapCenter);
 
             if (null != initialClusters) {
                 List<Object> clusterList = (List<Object>) initialClusters;
@@ -223,5 +223,8 @@ class AMapOptionsBuilder implements AMapOptionsSink {
         this.initialPolygons = polygonsObject;
     }
 
-
+    @Override
+    public void setGestureScaleByMapCenter(boolean gestureScaleByMapCenter) {
+        this.gestureScaleByMapCenter= gestureScaleByMapCenter;
+    }
 }

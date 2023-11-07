@@ -270,6 +270,11 @@ public class MapController
     public void setInitialClusters(Object initialClusters) {
 
     }
+	
+	@Override
+    public void setGestureScaleByMapCenter(boolean gestureScaleByMapCenter) {
+        amap.getUiSettings().setGestureScaleByMapCenter(gestureScaleByMapCenter);
+    }
 
     private CameraPosition getCameraPosition() {
         if (null != amap) {

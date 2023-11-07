@@ -1,6 +1,7 @@
 ## 【3.0.1】 - 2023-11-07.
 增加showInfoWindow 参数来源于 https://github.com/ninetowns/amap_flutter_map/commit/765facd97eef487a15ef870ab02941abf8d56f3a 但是iOS端未实现
 增加Clusters 和 MarkerMoveListener 参数来源于 https://github.com/jalen-mar/amap_flutter_map
+增加 gestureScaleByMapCenter 参数来源于 https://gitee.com/mywentop/xbr_gaode_amap
 
 ## 【3.0.0】 - 2021-11-23.
 * AMapWidget初始化时需要传入高德隐私合规配置参数privacyStatement
