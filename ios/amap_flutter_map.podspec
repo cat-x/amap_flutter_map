@@ -17,7 +17,7 @@ A new Flutter plugin.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'AMap3DMap-NO-IDFA'
-#  s.dependency 'AMapSearch-NO-IDFA'
+  s.dependency 'AMapSearch-NO-IDFA'
   s.static_framework = true
   s.platform = :ios, '8.0'
 
