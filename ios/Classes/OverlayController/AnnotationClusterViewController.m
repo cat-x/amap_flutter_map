@@ -177,7 +177,7 @@
     
     request.keywords            = keyword;
     request.city                = @"010";
-    request.requireExtension    = YES;
+//    request.requireExtension    = YES;
     
     self.currentRequest = request;
     [self.search AMapPOIKeywordsSearch:request];

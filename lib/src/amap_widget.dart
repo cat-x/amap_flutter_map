@@ -334,6 +334,7 @@ class _AMapOptions {
     this.scrollGesturesEnabled,
     this.tiltGesturesEnabled,
     this.zoomGesturesEnabled,
+    this.gestureScaleByMapCenter,
   });
 
   /// 地图类型
