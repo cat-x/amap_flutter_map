@@ -1,3 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.amap.flutter.amap_flutter_map">
+    <!-- Pointer tag for 0x705842eae0 was truncated, see 'https://source.android.com/devices/tech/debug/tagged-pointers'.-->
+    <!-- https://source.android.com/docs/security/test/tagged-pointers?hl=zh-cn-->
+    <application android:allowNativeHeapPointerTagging="false">
+    </application>
 </manifest>
