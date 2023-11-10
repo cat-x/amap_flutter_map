@@ -82,7 +82,9 @@ class PolylineController implements PolylineOptionsSink {
 
     @Override
     public void setGradient(boolean gradient) {
-        polyline.setGeodesic(gradient);
+        PolylineOptions options = polyline.getOptions();
+        options.useGradient(gradient);
+        polyline.setOptions(options);
     }
 
     @Override

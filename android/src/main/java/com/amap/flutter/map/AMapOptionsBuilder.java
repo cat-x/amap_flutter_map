@@ -47,6 +47,8 @@ class AMapOptionsBuilder implements AMapOptionsSink {
 
     private Object initialPolygons;
 
+    private boolean gestureScaleByMapCenter;
+
     AMapPlatformView build(int id,
                            Context context,
                            BinaryMessenger binaryMessenger,

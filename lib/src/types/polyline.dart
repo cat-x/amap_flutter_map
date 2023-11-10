@@ -64,6 +64,8 @@ class Polyline extends BaseOverlay {
     this.customTexture,
     this.onTap,
     this.color = const Color(0xCCC4E0F0),
+    this.isGradient = false,
+    this.colorValues = const [],
   })  : assert(points.length > 0),
         this.width = (width <= 0 ? 10 : width),
         this.alpha = (alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha)),
@@ -102,6 +104,9 @@ class Polyline extends BaseOverlay {
   /// 点击回调（回调参数为id)
   final ArgumentCallback<String>? onTap;
 
+  final bool isGradient;
+  final List<Color> colorValues;
+
   /// 实际copy函数
   Polyline copyWith({
     List<LatLng>? pointsParam,
@@ -115,6 +120,8 @@ class Polyline extends BaseOverlay {
     BitmapDescriptor? customTextureParam,
     ArgumentCallback<String>? onTapParam,
     Color? colorParam,
+    bool? isGradient,
+    List<Color>? colorValues,
   }) {
     Polyline copyPolyline = Polyline(
       points: pointsParam ?? points,
@@ -128,6 +135,8 @@ class Polyline extends BaseOverlay {
       customTexture: customTextureParam ?? customTexture,
       onTap: onTapParam ?? onTap,
       color: colorParam ?? color,
+      isGradient: isGradient ?? this.isGradient,
+      colorValues: colorValues ?? this.colorValues,
     );
     copyPolyline.setIdForCopy(id);
     return copyPolyline;
@@ -150,6 +159,8 @@ class Polyline extends BaseOverlay {
       'joinType': joinType.index,
       'customTexture': customTexture?.toMap(),
       'color': color.value,
+      'isGradient': isGradient,
+      'colorValues': colorValues.map((Color color) => color.value).toList(),
     }..removeAllEmptyEntry();
   }
 
@@ -168,7 +179,9 @@ class Polyline extends BaseOverlay {
         dashLineType == typedOther.dashLineType &&
         capType == typedOther.capType &&
         joinType == typedOther.joinType &&
-        color == typedOther.color;
+        color == typedOther.color &&
+        isGradient == typedOther.isGradient &&
+        listEquals(colorValues, typedOther.colorValues);
   }
 
   @override
@@ -186,7 +199,7 @@ class Polyline extends BaseOverlay {
 Map<String, Polyline> keyByPolylineId(Iterable<Polyline> polylines) {
   return Map<String, Polyline>.fromEntries(
     polylines.map(
-      (Polyline polyline) => MapEntry<String, Polyline>(
+          (Polyline polyline) => MapEntry<String, Polyline>(
         polyline.id,
         polyline.clone(),
       ),
